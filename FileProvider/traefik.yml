@@ -1,0 +1,9 @@
+entryPoints:
+  web:
+    address: :80
+
+providers:
+  file:
+    filename: /traefik_dynamic.yml
+api:
+  insecure: true
