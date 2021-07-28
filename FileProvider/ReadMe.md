@@ -20,6 +20,8 @@ Thông thường chúng ta dùng 2 file cấu hình:
 
 ## Chạy thử ví dụ này
 
+![](images/diagram.jpg)
+
 ```
 docker-compose up -d
 ```
@@ -96,3 +98,26 @@ http:
         servers:
           - url: http://whoami  # Mặc dù có 2 service load balance nhưng luôn chỉ chỏ được 1 cái đầu tiên
 ```
+
+Chuỗi basic authentication được sinh ở web site này https://hostingcanada.org/htpasswd-generator/
+```
+- root:$2y$10$Ja5KhDLxe2wqVPL4rOfx..Ep2Iq3NWH0FIYa6urKdlfIEtohSjS2a
+```
+![](images/htpass_generate.jpg)
+
+
+## Đánh giá File Provider
+
+Nhược điểm lớn nhất là mặc dù dịch vụ whoami scale thành 2 instance nhưng cấu hình dưới chỉ route đến 1 instance duy nhất.
+Có nghĩa không tận dụng được Load Balancing. Thế mạnh của Traefik 2.x không phải là sử dụng file để cấu hình, mà là khả năng kết nối vào các loại container orchestration để biết được các dịch vụ cần route biến chuyển như thế nào. File cấu hình luôn cứng nhắc không thể theo kịp sự vận động của hệ thống container co dãn. Traefik có thể chậm hơn Nginx hay HA Proxy một chút, nhưng nó hơn ở điểm phối hợp tốt với container orchestration như Docker, Kubernetes.
+
+```yaml
+services:
+    whoami:
+      loadBalancer:
+        servers:
+          - url: http://whoami
+```
+
+
+![](images/route_1_instance.jpg)
