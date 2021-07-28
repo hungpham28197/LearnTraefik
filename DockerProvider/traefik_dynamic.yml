@@ -1,0 +1,16 @@
+# http routing section
+http:
+  routers:
+    # Define a connection between requests and services
+    to-whoami:
+      rule: "Host(`localhost`) && PathPrefix(`/whoami`)"
+      middlewares:
+        - test-user
+      service: whoami-dockerprovider@docker
+
+  middlewares:
+    # Define an authentication mechanism
+    test-user:
+      basicAuth:
+        users:
+          - root:$2y$10$Ja5KhDLxe2wqVPL4rOfx..Ep2Iq3NWH0FIYa6urKdlfIEtohSjS2a
