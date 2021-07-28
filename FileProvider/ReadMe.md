@@ -57,6 +57,7 @@ services:
     image: traefik/whoami
 ```
 ## traefik.yml
+Đây là file cấu hình cho Traefik nó sẽ được đọc khi Traefik khởi động. Nó được gọi là static configuration file.
 
 ```yml
 entryPoints:
@@ -71,6 +72,7 @@ api:
 ```
 
 ## traefik_dynamic.yml
+Đây là file cấu hình động. Nếu bạn chỉnh để Traefik cứ định thời đọc lại file cấu hình động thì nó không cần phải khởi động lại mà tự cấu hình khi chạy, một dạng hot reload lại configuration.
 
 ```yml
 # Cấu hình định tuyến
