@@ -30,6 +30,9 @@ func main() {
 	// Restricted Routes
 	app.Get("/restricted", restricted)
 
+	//Authenticate JWT sử dụng cho Traefik ForwardAuth
+	app.Get("/auth", authenticate)
+
 	app.Listen(":3000")
 }
 
@@ -69,4 +72,8 @@ func restricted(c *fiber.Ctx) error {
 	claims := user.Claims.(jwt.MapClaims)
 	name := claims["name"].(string)
 	return c.SendString("Welcome " + name)
+}
+
+func authenticate(c *fiber.Ctx) error {
+	return c.Status(200).SendString("Authenticated!")
 }

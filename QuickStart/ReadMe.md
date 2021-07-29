@@ -9,6 +9,9 @@ Trong terminal, gõ lệnh
 docker-compose up -d
 ```
 ![](images/list_all_containers.jpg)
+## whoami
+
+Để xem hãy gõ http://whoami.localhost
 
 ## hifiber
 Ứng dụng Golang Fiber lắng nghe ở cổng 3000, trả về chuỗi
