@@ -1,0 +1,2 @@
+- [Traefik Forward Auth](https://github.com/thomseddon/traefik-forward-auth)
+- [Google Oauth Traefik](https://www.smarthomebeginner.com/google-oauth-with-traefik-2-docker/)
