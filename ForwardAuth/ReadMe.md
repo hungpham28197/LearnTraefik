@@ -60,6 +60,16 @@ services:
       - "traefik.http.middlewares.jwt.forwardauth.authResponseHeaders=X-Forwarded-User"
       - "traefik.http.services.jwt.loadbalancer.server.port=3000" # Cổng load balancer dịch vụ JWT là 3000
 ```
+## Kết luận
+Chỉ cần sử dụng một file docker-compose.yml không cần file cấu hình traefik.yml hay traefik_dynamic.yml  chúng vẫn dựng được một hệ thống API Gateway có middle ForwardAuth chuyển hướng các request đến service viết bằng Fiber để xác thực Authorization header.
+
+Service JWT xác thực thậm chí scale thành nhiều instance để giúp việc xử lý request hiệu suất hơn.
+
+Tóm lại chuyển từ Session Cookie Authentication sang JWT Authentication giúp chúng ta loại bỏ Redis session.
+Service JWT có thể kết nối CSDL để lấy thông tin về User, Role từ đó phân quyền luôn cũng được.
+
+Khi mà chúng ta tự viết server thì chúng ta muốn làm gì cũng được. Sự sáng tạo nằm trong tay bạn !
+
 
 ## Tham khảo
 
