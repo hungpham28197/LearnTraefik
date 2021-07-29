@@ -24,6 +24,7 @@ Response
 }
 ```
 
+![](images/login.jpg)
 Request a restricted resource using the token in Authorization request header.
 
 ```
@@ -33,6 +34,7 @@ Response
 ```
 Welcome John Doe
 ```
+![](images/restricted.jpg)
 ## Cấu hình JWT middleware
 
 ```go
