@@ -23,7 +23,6 @@ services:
   jwt:
     build: FiberJWT
     image: jwt:latest
-    scale: 2
     labels:
       - "traefik.http.routers.jwt.rule=Host(`jwt.localhost`)"
       - "traefik.http.middlewares.jwt.forwardauth.address=http://jwt:3000/auth"

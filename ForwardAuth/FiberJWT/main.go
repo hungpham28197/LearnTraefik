@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -20,7 +21,7 @@ func main() {
 	// Unauthenticated route
 	app.Get("/", accessible)
 
-	// JWT Middleware
+	// JWT Middleware sẽ chặn trước tất các request đê
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey:     SecretKey,
 		SuccessHandler: handle_when_valid_token,
@@ -75,5 +76,9 @@ func restricted(c *fiber.Ctx) error {
 }
 
 func authenticate(c *fiber.Ctx) error {
+	fmt.Println("***authenticate")
+	fmt.Println(c)
+	fmt.Println("BaseURL", c.BaseURL())
+	fmt.Println("c.Request.URI", c.Request().URI())
 	return c.Status(200).SendString("Authenticated!")
 }

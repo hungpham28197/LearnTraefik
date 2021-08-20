@@ -7,7 +7,10 @@ import (
 )
 
 func handle_when_valid_token(c *fiber.Ctx) error {
-	fmt.Println(c.Get("Authorization")) //Trích xuất ra đoạn header
+	fmt.Println("***handle_when_valid_token")
+	fmt.Println("BaseURL", c.BaseURL())
+	fmt.Println("c.Route.Path", c.Route().Path)
+	fmt.Println("c.Request.URI", c.Request().URI())
 	c.Next()
 	return nil
 }

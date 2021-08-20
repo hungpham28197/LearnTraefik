@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  reverse-proxy:
+    image: traefik:v2.5
+    command: 
+      - --providers.docker
+      - --api.insecure=true
+
+    ports:      
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.iris.com`)"
+      - "traefik.http.routers.whoami.middlewares=auth"
+
+  auth:
+    build: auth
+    image: auth:latest
+    labels:
+      - "traefik.http.routers.auth.rule=Host(`auth.iris.com`)"
+      - "traefik.http.middlewares.auth.forwardauth.address=http://auth:3000/auth"
+      - "traefik.http.middlewares.auth.forwardauth.trustForwardHeader=true"
+      - "traefik.http.middlewares.auth.forwardauth.authResponseHeaders=X-Forwarded-User"
+      - "traefik.http.services.auth.loadbalancer.server.port=3000"
