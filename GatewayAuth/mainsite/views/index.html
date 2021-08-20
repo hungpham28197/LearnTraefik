@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"
+    integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <title>Main page</title>
+</head>
+
+<body>
+  {{ if .authinfo }}
+  <h1>Welcome {{ .authinfo.User }}</h1>
+  <a href="/upload">Upload Photo</a><br>
+  <a href="javascript:logout()">Logout</a>
+  {{ else }}
+  <h1>Login using JSON</h1>
+  User : <input type="text" id="Email"> <br>
+  Pass : <input type="text" id="Pass"> <br><br>
+  <button onclick="login();">Login</button>
+  <p id="result"></p>
+  {{ end }}
+  <script>
+    function login() {
+      axios.defaults.withCredentials = true;
+      axios.post('http://auth.iris.com/loginjson', {
+        Email: $("#Email").val(),
+        Pass: $("#Pass").val()
+      }).then(response => {
+        location.reload();
+      }).catch(response => {
+        $("#result").html(response.data).css('color', 'red');
+      });
+    }
+    function logout() {
+      axios.defaults.withCredentials = true;
+      axios.get('http://auth.iris.com/logoutjson').then(response => {
+        location.reload();
+      }).catch(response => {
+        $("#result").html(response.data).css('color', 'red');
+      });
+
+    }
+  </script>
+</body>
+
+</html>

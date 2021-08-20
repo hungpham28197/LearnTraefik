@@ -1,0 +1,17 @@
+# http routing section
+http:
+  routers:
+    # Kiểm tra quyền nếu request đến teacher.iris.com không chứa đường dẫn public
+    protect-mainsite:
+      rule: "Host(`iris.com`) && !PathPrefix(`/public`)"
+      middlewares:
+        - auth@docker
+      service: mainsite@docker
+
+    protect-whoami:
+      rule: "Host(`whoami.iris.com`)"
+      middlewares:
+        - auth@docker
+      service: whoami-gatewayauth@docker
+
+    

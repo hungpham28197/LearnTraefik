@@ -1,0 +1,12 @@
+entryPoints:
+  web:
+    address: :80
+
+providers:
+  docker: {}
+  file:
+    filename: /traefik_dynamic.yml
+api:
+  insecure: true
+  
+accessLog: {}
