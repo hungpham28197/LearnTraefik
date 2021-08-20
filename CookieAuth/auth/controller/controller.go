@@ -108,6 +108,7 @@ func Logout(ctx iris.Context) {
 	session := sessions.Get(ctx)
 	//Revoke users authentication
 	session.Clear()
+	ctx.RemoveCookie(SESSION_COOKIE)
 	ctx.Redirect("/")
 }
 

@@ -1,77 +1,76 @@
 # Traefik Authentication Forwarder
 
-![](image/diagram.jpg)
+
 
 ## 1. Chạy thử
-Khởi động Docker containers
+
+### 1.1 Sửa file /etc/hosts để giả lập DNS
+
 ```
-cd ForwardAuth
+sudo nano /etc/hosts
+```
+Thêm các dòng sau đây vào file /etc/hosts
+```
+127.0.0.1 auth.iris.com
+127.0.0.1 whoami.iris.com
+```
+Kiểm tra lại bằng lệnh ping
+```
+ping auth.iris.com
+ping whoami.iris.com
+```
+
+### 1.2 Khởi động Docker containers
+```
+cd CookieAuth
 docker-compose up -d
 ```
-Dùng phần mềm [ctop](https://github.com/bcicen/ctop) để xem các container đang chạy sẽ thấy
-![](image/ctop.jpg)
+![](image/portainer.jpg)
 
-
-### 1.1 Đăng nhập với user/pass = john/doe ở dịch vụ JWT
-POST http://jwt.localhost/login
+### 1.3 Đăng nhập http://auth.iris.com/
+user: admin@gmail.com
+pass: 123
 
 ![](image/login.jpg)
-Lấy token trả về sau đăng nhập thành công
 
-### 1.2 Kết nối đến dịch WhoAmI với token có được
-GET http://whoami.localhost/
+Nếu đăng nhập thành công hãy inspect cookie mà server gán cho client
 
-Lấy token từ bước 1. paste vào tab Authorization, chọn kiểu Bearer Token
+![](image/login_success.jpg)
 
-![](image/whoami.jpg)
+### 1.4 Truy cập whoami.iris.com
+Nhớ bước đăng nhập thành công phía trước, chúng ta có thể vào được http://whoami.iris.com
 
-## Giải thích docker-compose.yml
-```yaml
-version: '3'
+![](image/whoami_iris_com.jpg)
 
-services:
-  reverse-proxy:
-    image: traefik:v2.5
-    command: 
-      - --providers.docker  # Kết nối với Docker để lấy thông tin containers thực tế bên trong
-      - --api.insecure=true # Bật giao diện dashboard lên
+### 1.5 Logout ở http://auth.iris.com/
 
-    ports:      
-      - "80:80"
-      - "8080:8080"
-    volumes:
-      # Lắng nghe sự kiện từ Docker
-      - /var/run/docker.sock:/var/run/docker.sock
+Sau khi logout thử vào lại http://whoami.iris.com thì sẽ bị cấm.
 
-  whoami:
-    image: traefik/whoami
-    labels:
-      - "traefik.http.routers.whoami.rule=Host(`whoami.localhost`)" # Hứng các request whoami.localhost vào service này
-      - "traefik.http.routers.whoami.middlewares=jwt" # Định nghĩa middle ware trỏ đến service jwt
+![](image/whoami_forbidden.jpg)
 
-  jwt:
-    build: FiberJWT  # Trỏ đến thư mục chứa mã nguồn để build docker image
-    image: jwt:latest # Đặt tên docker image
-    scale: 2 # Scale thành 2 instance
-    labels:
-      - "traefik.http.routers.jwt.rule=Host(`jwt.localhost`)" # Dịch vụ này hứng các request jwt.localhost
-      - "traefik.http.middlewares.jwt.forwardauth.address=http://jwt:3000/auth" # Địa chỉ để nhận các request cần xác thực JWT
-      - "traefik.http.middlewares.jwt.forwardauth.trustForwardHeader=true" # Forward tất cả header nếu xác thực thành công
-      - "traefik.http.middlewares.jwt.forwardauth.authResponseHeaders=X-Forwarded-User"
-      - "traefik.http.services.jwt.loadbalancer.server.port=3000" # Cổng load balancer dịch vụ JWT là 3000
+Nguyên nhân là do Session đăng nhập của người dùng đã bị xoá khỏi session
+
+### 1.6 Vào log của auth.iris.com xem
+
+Chúng ta sẽ thấy thông tin chi tiết về request được điều hướng thế nào
 ```
-## Kết luận
-Chỉ cần sử dụng một file docker-compose.yml không cần file cấu hình traefik.yml hay traefik_dynamic.yml  chúng vẫn dựng được một hệ thống API Gateway có middle ForwardAuth chuyển hướng các request đến service viết bằng Fiber để xác thực Authorization header.
+Referer:  http://whoami.iris.com/abc/def?q=ox-13
+Path:  /auth
+RouteName:  GET/auth
+```
 
-Service JWT xác thực thậm chí scale thành nhiều instance để giúp việc xử lý request hiệu suất hơn.
+Đây chính là hàm quan trọng để kiểm tra đăng nhập
+```go
+func Authenticate(ctx iris.Context) {
+	fmt.Println("Referer: ", ctx.GetReferrer())
+	fmt.Println("Path: ", ctx.Path())
+	fmt.Println("RouteName: ", ctx.RouteName())
 
-Tóm lại chuyển từ Session Cookie Authentication sang JWT Authentication giúp chúng ta loại bỏ Redis session.
-Service JWT có thể kết nối CSDL để lấy thông tin về User, Role từ đó phân quyền luôn cũng được.
-
-Khi mà chúng ta tự viết server thì chúng ta muốn làm gì cũng được. Sự sáng tạo nằm trong tay bạn !
-
-
-## Tham khảo
-
-- [Traefik Forward Auth](https://github.com/thomseddon/traefik-forward-auth)
-- [Google Oauth Traefik](https://www.smarthomebeginner.com/google-oauth-with-traefik-2-docker/)
+	if IsLogin(ctx) {
+		ctx.Next() //Cho phép đi tiếp
+	} else {
+		ctx.StatusCode(iris.StatusForbidden)
+		return
+	}
+}
+```
