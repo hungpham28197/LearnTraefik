@@ -71,15 +71,6 @@ func GetAuthInfo(ctx iris.Context) (*AuthenInfo, error) {
 	return authinfo, nil
 }
 
-/*
-Xoá toàn bộ session và xoá luôn cả Cookie session ở máy người dùng
-*/
-func ClearSession(ctx iris.Context) {
-	sess := sessions.Get(ctx)
-	sess.Destroy()
-	ctx.RemoveCookie(SESSION_COOKIE)
-}
-
 func IsLogin(ctx iris.Context) bool {
 	login, _ := sessions.Get(ctx).GetBoolean(SESS_AUTH)
 	return login

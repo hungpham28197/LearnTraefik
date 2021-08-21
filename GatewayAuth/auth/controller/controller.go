@@ -113,11 +113,6 @@ func LoginJSON(ctx iris.Context) {
 	_, _ = ctx.JSON("Login successfully")
 }
 
-func Logout(ctx iris.Context) {
-	session.ClearSession(ctx)
-	ctx.Redirect("/")
-}
-
 func LogoutFromWeb(ctx iris.Context) {
 	logout(ctx)
 	ctx.Redirect("/")
@@ -132,5 +127,6 @@ func logout(ctx iris.Context) {
 	if !session.IsLogin(ctx) {
 		logger.Log(ctx, eris.Warning("Bạn chưa login").UnAuthorized())
 	}
-	session.ClearSession(ctx)
+	//Xoá toàn bộ session và xoá luôn cả Cookie sessionid ở máy người dùng
+	session.Sess.Destroy(ctx)
 }
