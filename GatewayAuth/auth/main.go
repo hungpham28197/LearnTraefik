@@ -35,8 +35,8 @@ func main() {
 	app.Get("/secret", controller.ShowSecret)
 	app.Post("/login", controller.Login)
 	app.Post("/loginjson", controller.LoginJSON)
-	app.Get("/logout", controller.Logout)
-	app.Get("/logoutjson", controller.LogoutJSON)
+	app.Get("/logout", controller.LogoutFromWeb)
+	app.Get("/logoutjson", controller.LogoutFromREST)
 	app.Any("/auth", controller.Authenticate)
 
 	template.InitViewEngine(app)

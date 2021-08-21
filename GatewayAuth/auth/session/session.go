@@ -29,9 +29,10 @@ type AuthenInfo struct {
 }
 
 var Sess = sessions.New(sessions.Config{
-	Cookie:       SESSION_COOKIE,
-	AllowReclaim: true,
-	Expires:      time.Hour * 48, /*Có giá trị trong 2 ngày*/
+	Cookie:          SESSION_COOKIE,
+	AllowReclaim:    true,
+	CookieSecureTLS: false,          //Hãy chuyển sang true ở production
+	Expires:         time.Hour * 48, /*Có giá trị trong 2 ngày*/
 })
 
 func InitSession() *redis.Database {
@@ -68,6 +69,15 @@ func GetAuthInfo(ctx iris.Context) (*AuthenInfo, error) {
 		return nil, eris.NewFrom(err)
 	}
 	return authinfo, nil
+}
+
+/*
+Xoá toàn bộ session và xoá luôn cả Cookie session ở máy người dùng
+*/
+func ClearSession(ctx iris.Context) {
+	sess := sessions.Get(ctx)
+	sess.Destroy()
+	ctx.RemoveCookie(SESSION_COOKIE)
 }
 
 func IsLogin(ctx iris.Context) bool {

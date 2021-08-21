@@ -114,22 +114,23 @@ func LoginJSON(ctx iris.Context) {
 }
 
 func Logout(ctx iris.Context) {
-	sess := sessions.Get(ctx)
-	//Revoke users authentication
-	sess.Clear()
-	ctx.RemoveCookie(session.SESSION_COOKIE)
+	session.ClearSession(ctx)
 	ctx.Redirect("/")
 }
 
-func LogoutJSON(ctx iris.Context) {
-	if !session.IsLogin(ctx) {
-		ctx.StatusCode(iris.StatusUnauthorized)
-		_, _ = ctx.JSON("You are not login yet")
-	}
+func LogoutFromWeb(ctx iris.Context) {
+	logout(ctx)
+	ctx.Redirect("/")
+}
 
-	sess := sessions.Get(ctx)
-	//Revoke users authentication
-	sess.Clear()
-	ctx.RemoveCookie(session.SESSION_COOKIE)
+func LogoutFromREST(ctx iris.Context) {
+	logout(ctx)
 	_, _ = ctx.JSON("Logout success")
+}
+
+func logout(ctx iris.Context) {
+	if !session.IsLogin(ctx) {
+		logger.Log(ctx, eris.Warning("Bạn chưa login").UnAuthorized())
+	}
+	session.ClearSession(ctx)
 }

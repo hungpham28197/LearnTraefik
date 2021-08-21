@@ -1,4 +1,4 @@
-# Auth Gateway
+# Gateway Auth
 
 
 ## Hỏi đáp
@@ -12,28 +12,6 @@
 ### Single Point of Failure là gì?
 
 ### Proxy khác gì với Reverse Proxy?
-
-## Docker
-
-### Lệnh docker khác gì lệnh docker-compose?
-
-### Portainer để làm gì?
-
-### -p 80:8080 có ý nghĩa gì? 80 là cổng nào và 8080 là cổng nào?
-
-### docker build cần có những tham số gì?
-
-### Khác biệt giữa docker image và docker container là gì?
-
-### Dockerfile khác gì với docker-compose.yml
-
-### Muốn service A trong docker-compose được khởi động sau khi service B đã chạy thì cần thêm cấu hình gì?
-
-### Lệnh tạo một vùng lưu trữ trên host để docker container ghi vào là gì?
-
-### Ý nghĩa của lệnh này /var/run/docker.sock:/var/run/docker.sock
-
-### docker-compose có lệnh để build lại những docker image cần dùng cho service, lệnh đó là lệnh nào?
 
 ## Traefik
 
@@ -83,4 +61,64 @@
 - "traefik.http.middlewares.auth.forwardauth.authResponseHeaders=X-Forwarded-User"
 
 - "traefik.http.services.auth.loadbalancer.server.port=3000"
+
+## Project Auth
+
+### main.go
+
+- config.ReadConfig() nếu truyền vào tham số thì tác dụng của tham số này là gì?
+
+- defer logFile.Close() để làm gì?
+
+- tại sao không để defer trong hàm InitSession mà phải để ở main.go
+
+- Tác dụng của crs := cors.New(cors.Options{
+
+- Khác biệt giữa app.UseRouter và app.Use là gì?
+
+- app.Any khác gì với app.Get và app.Post?
+
+### controller
+
+- Tại sao trong cấu hình traefik luôn trỏ đến /authenticate -> controller.Authenticate()
+
+### config.go
+
+- Khi nào thì chúng ta sẽ đọc config.dev.json và khi nào chúng ta sẽ đọc config.product.json?
+
+- Ý nghĩa của lệnh panic(err) là gì?
+
+### model/user.go
+
+- Tại sao chúng ta lại tách định nghĩa user ra khỏi controller và repo?
+
+### session.go
+
+- để đọc một map[string]interface{} vào một struct chúng ta dùng thư viện gì?
+
+### Session
+
+- Khác biệt giữa Sess.Clear() vs Sess.Delete() và Sess.DeleteFlash() là gì?
+
+## Docker
+
+### Lệnh docker khác gì lệnh docker-compose?
+
+### Portainer để làm gì?
+
+### -p 80:8080 có ý nghĩa gì? 80 là cổng nào và 8080 là cổng nào?
+
+### docker build cần có những tham số gì?
+
+### Khác biệt giữa docker image và docker container là gì?
+
+### Dockerfile khác gì với docker-compose.yml
+
+### Muốn service A trong docker-compose được khởi động sau khi service B đã chạy thì cần thêm cấu hình gì?
+
+### Lệnh tạo một vùng lưu trữ trên host để docker container ghi vào là gì?
+
+### Ý nghĩa của lệnh này /var/run/docker.sock:/var/run/docker.sock
+
+### docker-compose có lệnh để build lại những docker image cần dùng cho service, lệnh đó là lệnh nào?
 
