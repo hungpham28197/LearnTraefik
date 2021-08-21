@@ -3,7 +3,7 @@ http:
   routers:
     # Kiểm tra quyền nếu request đến teacher.iris.com không chứa đường dẫn public
     protect-mainsite:
-      rule: "Host(`iris.com`) && !PathPrefix(`/public`)"
+      rule: "Host(`iris.com`) && PathPrefix(`/private`)"
       middlewares:
         - auth@docker
       service: mainsite@docker

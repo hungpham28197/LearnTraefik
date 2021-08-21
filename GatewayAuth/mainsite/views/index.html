@@ -11,12 +11,13 @@
     integrity="sha512-bZS47S7sPOxkjU/4Bt0zrhEtWx0y0CRkhEp8IckzK+ltifIIE9EMIMTuT/mEzoIMewUINruDBIR/jJnbguonqQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <title>Main page</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 </head>
 
 <body>
   {{ if .authinfo }}
   <h1>Welcome {{ .authinfo.User }}</h1>
-  <a href="/upload">Upload Photo</a><br>
+  <a href="/private/upload">Upload Photo</a><br>
   <a href="javascript:logout()">Logout</a>
   {{ else }}
   <h1>Login using JSON</h1>

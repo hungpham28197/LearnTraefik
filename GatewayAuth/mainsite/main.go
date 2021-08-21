@@ -23,13 +23,15 @@ func main() {
 	defer redisDb.Close()
 	app.Use(session.Sess.Handler())
 
-	public := app.Party("/public/")
-	{
-		public.Get("/", controller.ShowHomePage)
-	}
+	app.HandleDir("/", iris.Dir("./static"))
 
-	app.Get("/upload", controller.ShowUploadForm)
-	app.Post("/upload", controller.UploadPhoto)
+	app.Get("/", controller.ShowHomePage)
+
+	private := app.Party("/private/")
+	{
+		private.Get("/upload", controller.ShowUploadForm)
+		private.Post("/upload", iris.LimitRequestBodySize(300000), controller.UploadPhoto)
+	}
 
 	template.InitViewEngine(app)
 	_ = app.Listen(config.Config.Port)
