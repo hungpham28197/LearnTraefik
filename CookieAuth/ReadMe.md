@@ -79,7 +79,7 @@ func Authenticate(ctx iris.Context) {
 
 ### 2.1 Session là gì?
 Trong một ứng dụng có nhiều người dùng và truy cập vào server, để định danh, phân biệt từng người thì web server sẽ sử dụng đến session.\
-Sesion sẽ lưu trữ thông tin của người dùng dưới dạng `key : value` với key là session id của người dùng. Sau khi người dùng đăng nhập, SessionId được gắn vào cookie và trả về trình duyệt để sử dụng cho các lần truy cập sau.
+Sesion sẽ lưu trữ thông tin của người dùng. Sau khi người dùng đăng nhập, Session Id được gắn vào cookie và trả về trình duyệt để sử dụng cho các lần truy cập sau.
 ```go
 sess := sessions.New(sessions.Config{
 		Cookie:       controller.SESSION_COOKIE,
