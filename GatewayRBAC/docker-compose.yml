@@ -1,0 +1,55 @@
+version: '3'
+
+volumes:
+  redis_data:
+
+services:
+  gateway:
+    image: traefik:v2.5
+    ports:      
+      - "80:80"
+      - "8080:8080"
+    # Enables the web UI and tells Traefik to listen to docker
+    command: 
+      - --api.insecure=true 
+      - --providers.docker
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+  
+
+  redis:
+    image: redis:alpine
+    command: redis-server --requirepass 123
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  whoami:
+    image: traefik/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.iris.com`)"
+      - "traefik.http.routers.whoami.middlewares=auth"
+
+  auth:
+    build: auth
+    image: auth:latest
+    scale: 2
+    labels:
+      - "traefik.http.routers.auth.rule=Host(`auth.iris.com`)"
+      - "traefik.http.middlewares.auth.forwardauth.address=http://auth:3000/auth"
+      - "traefik.http.middlewares.auth.forwardauth.trustForwardHeader=true"
+      - "traefik.http.middlewares.auth.forwardauth.authResponseHeaders=X-Forwarded-User"
+      - "traefik.http.services.auth.loadbalancer.server.port=3000"
+    depends_on:
+      - "redis"
+
+  mainsite:
+    build: mainsite
+    image: mainsite:latest
+    labels:
+      - "traefik.http.routers.mainsite.rule=Host(`iris.com`)"
+      - "traefik.http.services.mainsite.loadbalancer.server.port=9001"
+    depends_on:
+      - "redis"
