@@ -116,7 +116,7 @@ Nếu entryPoint traefik không được định cấu hình, nó sẽ tự đ�
 - tại sao không để defer trong hàm InitSession mà phải để ở main.go
  + Để có thể ghi nhiều log nhất có thể rồi mới close
 - Tác dụng của crs := cors.New(cors.Options{
- + Cho phép 
+ + Cho phép client gọi đến resouce server từ các nguồn khác nhau
 - Khác biệt giữa app.UseRouter và app.Use là gì?
  + app.UseRouter chạy trước UseGlobal
  + app.Use chạy sau UseGlobal
