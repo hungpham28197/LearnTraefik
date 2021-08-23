@@ -1,8 +1,12 @@
 // Public models dùng chung giữa các dự án và module
 package pmodel
 
-//Danh sách các role
-type Roles map[int]bool
+/* Danh sách các role gán cho một người hoặc một route
+dữ liệu trong value kiểu bool nhưng tôi không dùng bool mà dùng interface{}
+bởi nếu dùng map[int]bool khi truyền vào key không tồn tại luôn trả về false
+nhưng tôi mong muốn phải trả về nil mới đúng bản chất
+*/
+type Roles map[int]interface{}
 
 //Thông tin tài khoản
 type User struct {

@@ -41,8 +41,12 @@ func DebugRouteRole() {
 	fmt.Println("*** Private Routes ***")
 	for route, roles := range routesRoles {
 		fmt.Println("-" + route)
-		for role := range roles {
-			fmt.Println("     " + RoleName(role))
+		for role, allow := range roles {
+			if allow.(bool) {
+				fmt.Println("      " + RoleName(role)) //allow role in trắng
+			} else {
+				fmt.Println("     \033[31m^" + RoleName(role) + "\033[0m") //forbid role in đỏ
+			}
 		}
 	}
 }

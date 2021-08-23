@@ -1,6 +1,7 @@
 package rbac
 
 import (
+	"auth/pmodel"
 	"net/http"
 
 	"github.com/kataras/iris/v12/context"
@@ -12,7 +13,7 @@ Gán role vào route và path
 route = HTTP method + path
 roles là kết quả trả về từ hàm kiểu roleExp()
 */
-func assignRoles(method string, path string, roles map[int]bool) {
+func assignRoles(method string, path string, roles pmodel.Roles) {
 	routesRoles[method+" "+path] = roles
 
 	if httpVerbRole := pathsRoles[path]; httpVerbRole == nil {
@@ -21,7 +22,6 @@ func assignRoles(method string, path string, roles map[int]bool) {
 	pathsRoles[path][method] = roles
 }
 
-
 func Get(party router.Party, relativePath string, roleExp RoleExp, handlers ...context.Handler) {
 	party.Handle(http.MethodGet, relativePath, handlers...)
 	assignRoles(http.MethodGet, party.GetRelPath()+relativePath, roleExp())
@@ -29,6 +29,7 @@ func Get(party router.Party, relativePath string, roleExp RoleExp, handlers ...c
 
 func Post(party router.Party, relativePath string, roleExp RoleExp, handlers ...context.Handler) {
 	party.Handle(http.MethodPost, relativePath, handlers...)
+
 	assignRoles(http.MethodPost, party.GetRelPath()+relativePath, roleExp())
 }
 

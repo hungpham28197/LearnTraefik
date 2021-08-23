@@ -31,18 +31,23 @@ func main() {
 	app.UseRouter(crs)
 
 	app.Use(session.Sess.Handler())
+
+	rbacConfig := rbac.NewConfig()
+	rbacConfig.RootAllow = true
+	rbac.Init(rbacConfig) //Khởi động với cấu hình mặc định
+	
 	//đặt hàm này trên các hàm đăng ký route - controller
 	app.Use(rbac.CheckRoutePermission)
 
 	app.Get("/", controller.ShowHomePage)
 
-	rbac.Get(app, "/secret", rbac.AnyRoles(), controller.ShowSecret)
+	rbac.Get(app, "/secret", rbac.AllowAll(), controller.ShowSecret)
 
 	app.Post("/login", controller.Login)
 	app.Post("/loginjson", controller.LoginJSON)
 
-	rbac.Get(app, "/logout", rbac.AnyRoles(), controller.LogoutFromWeb)
-	rbac.Get(app, "/logoutjson", rbac.AnyRoles(), controller.LogoutFromREST)
+	rbac.Get(app, "/logout", rbac.AllowAll(), controller.LogoutFromWeb)
+	rbac.Get(app, "/logoutjson", rbac.AllowAll(), controller.LogoutFromREST)
 
 	template.InitViewEngine(app)
 

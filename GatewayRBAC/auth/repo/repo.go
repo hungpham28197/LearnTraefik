@@ -8,6 +8,12 @@ import (
 
 var users = []pmodel.User{
 	{
+		User:  "root",
+		Pass:  "1",
+		Email: "root@gmail.com",
+		Roles: pmodel.Roles{rbac.ROOT: true},
+	},
+	{
 		User:  "admin",
 		Pass:  "1",
 		Email: "admin@gmail.com",

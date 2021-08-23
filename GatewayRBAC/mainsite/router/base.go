@@ -13,33 +13,33 @@ func RegisterRoute(app *iris.Application) {
 	blog := app.Party("/blog")
 	{
 		blog.Get("/", controller.GetAllPosts) //Không dùng rbac có nghĩa là public method
-		rbac.Get(blog, "/all", rbac.AnyRoles(), controller.GetAllPosts)
-		rbac.Get(blog, "/create", rbac.NotRoles(rbac.MAINTAINER, rbac.SYSOP), controller.GetAllPosts)
-		rbac.Get(blog, "/{id:int}", rbac.InRoles(rbac.AUTHOR, rbac.EDITOR), controller.GetPostByID)
-		rbac.Get(blog, "/delete/{id:int}", rbac.InRoles(rbac.ADMIN, rbac.AUTHOR, rbac.EDITOR), controller.DeletePostByID)
-		rbac.Any(blog, "/any", rbac.InRoles(rbac.SYSOP), controller.PostMiddleware)
+		rbac.Get(blog, "/all", rbac.AllowAll(), controller.GetAllPosts)
+		rbac.Get(blog, "/create", rbac.Forbid(rbac.MAINTAINER, rbac.SYSOP), controller.GetAllPosts)
+		rbac.Get(blog, "/{id:int}", rbac.Allow(rbac.AUTHOR, rbac.EDITOR), controller.GetPostByID)
+		rbac.Get(blog, "/delete/{id:int}", rbac.Allow(rbac.ADMIN, rbac.AUTHOR, rbac.EDITOR), controller.DeletePostByID)
+		rbac.Any(blog, "/any", rbac.Allow(rbac.SYSOP), controller.PostMiddleware)
 	}
 
 	student := app.Party("/student")
 	{
-		rbac.Get(student, "/submithomework", rbac.InRoles(rbac.STUDENT), controller.SubmitHomework)
+		rbac.Get(student, "/submithomework", rbac.Allow(rbac.STUDENT), controller.SubmitHomework)
 	}
 
 	trainer := app.Party("/trainer")
 	{
-		rbac.Get(trainer, "/createlesson", rbac.InRoles(rbac.TRAINER), controller.CreateLesson)
+		rbac.Get(trainer, "/createlesson", rbac.Allow(rbac.TRAINER), controller.CreateLesson)
 	}
 
 	sysop := app.Party("/sysop")
 	{
-		rbac.Get(sysop, "/backupdb", rbac.InRoles(rbac.SYSOP), controller.BackupDB)
-		rbac.Get(sysop, "/upload", rbac.InRoles(rbac.MAINTAINER, rbac.SYSOP), controller.ShowUploadForm)
-		rbac.Post(sysop, "/upload", rbac.InRoles(rbac.MAINTAINER, rbac.SYSOP, rbac.SALE), iris.LimitRequestBodySize(300000), controller.UploadPhoto)
+		rbac.Get(sysop, "/backupdb", rbac.Allow(rbac.SYSOP), controller.BackupDB)
+		rbac.Get(sysop, "/upload", rbac.Allow(rbac.MAINTAINER, rbac.SYSOP), controller.ShowUploadForm)
+		rbac.Post(sysop, "/upload", rbac.Allow(rbac.MAINTAINER, rbac.SYSOP, rbac.SALE), iris.LimitRequestBodySize(300000), controller.UploadPhoto)
 	}
 
 	sales := app.Party("/sale")
 	{
-		rbac.Get(sales, "/runads", rbac.InRoles(rbac.SALE), controller.RunAdvertise)
+		rbac.Get(sales, "/runads", rbac.Allow(rbac.SALE), controller.RunAdvertise)
 	}
 
 }
